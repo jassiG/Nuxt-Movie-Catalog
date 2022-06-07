@@ -6,7 +6,7 @@
     <!-- Search -->
     <div class="container search">
       <input @keyup.enter="$fetch" type="text" placeholder="Search" v-model.lazy="searchInput" />
-      <button v-show="searchInput!==''" class="button">Clear Search</button>
+      <button v-show="searchInput!==''" class="button" @click="clearSearch">Clear Search</button>
     </div>
     
     <!-- Movies -->
@@ -55,7 +55,7 @@ export default {
     return {
       movies: [],
       searchInput: '',
-      searchedMovies: [],
+      // searchedMovies: [],
     }
   },
   async fetch(){
@@ -71,23 +71,38 @@ export default {
     async getMovies() {
       // TODO: install axios to make http requests
       const data = axios.get(
-        process.env.BASE_URL + `movie/popular?api_key=${process.env.API_KEY}`
+        // process.env.BASE_URL + `movie/popular?api_key=${process.env.API_KEY}`
+        "https://api.themoviedb.org/3/" + `movie/popular?api_key=7ecffdc37cc618c492ba2d3938aed3cc`
       )
       const result = await data
       result.data.results.forEach(movie => {
         this.movies.push(movie)
       })
+      if (!this.movies) {
+        this.movies = []
+      }
       // console.log(this.movies);
     },
     async searchMovies() {
       const data = axios.get(
-        process.env.BASE_URL + `search/movie?api_key=${process.env.API_KEY}&query=${this.searchInput}`
+        // process.env.BASE_URL + `search/movie?api_key=${process.env.API_KEY}&query=${this.searchInput}`
+        "https://api.themoviedb.org/3/" + `search/movie?api_key=7ecffdc37cc618c492ba2d3938aed3cc&query=${this.searchInput}`
       )
       const result = await data
+      this.movies = []
       result.data.results.forEach((movie) => {
-        this.searchedMovies.push(movie)
+        this.movies.push(movie)
       })
+      if (!this.movies) {
+        this.movies = []
+      }
       // console.log(this.movies);
+    },
+    async clearSearch(){
+      this.searchInput = ''
+      this.movies = []
+      await this.getMovies()
+      // console.log("CLEAR");
     }
   }
 }
