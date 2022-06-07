@@ -9,8 +9,11 @@
       <button v-show="searchInput!==''" class="button" @click="clearSearch">Clear Search</button>
     </div>
     
+    <!-- Loading -->
+    <Loading v-if="$fetchState.pending" />
+
     <!-- Movies -->
-    <div class="container movies">
+    <div v-else class="container movies">
       <div id="movie-grid" class="movies-grid">
         <div class="movie" v-for="(movie, index) in movies" :key="index">
           <div class="movie-img" :title="`${movie.title}`">
@@ -67,6 +70,7 @@ export default {
       await this.searchMovies()
     }
   },
+  fetchDelay: 500,
   methods: {
     async getMovies() {
       // TODO: install axios to make http requests
